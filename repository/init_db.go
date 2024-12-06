@@ -1,7 +1,9 @@
 package repository
 
 import (
+	"context"
 	"fmt"
+	"github.com/redis/go-redis/v9"
 	"github.com/spf13/viper"
 	"github.com/zhiqinkuang/easy-ecom/util"
 	"gorm.io/driver/mysql"
@@ -10,7 +12,11 @@ import (
 )
 
 // 声明的全局变量
-var db *gorm.DB
+var (
+	db   *gorm.DB
+	rdb  *redis.Client
+	rctx context.Context
+)
 
 // InitConfig 读取配置文件
 func InitConfig() {
@@ -43,16 +49,30 @@ func Init() error {
 	if err != nil {
 		util.Logger.Error("db connection error:" + err.Error())
 	}
+
+	rdb = redis.NewClient(&redis.Options{
+		Addr:     viper.GetString("redisAddress"),
+		Password: "",
+		DB:       0,
+	})
+	rctx = context.Background()
 	return err
 }
 
 // 无配置文件的初始
-//func Init0() error {
-//	var err error
-//	dsn := "root:1234@tcp(127.0.0.1:3306)/go_demo?charset=utf8mb4&parseTime=True&loc=Local"
-//	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
-//	if err != nil {
-//		util.Logger.Error("db connection error:" + err.Error())
-//	}
-//	return err
-//}
+func Init0() error {
+	var err error
+	dsn := "root:1234@tcp(127.0.0.1:3306)/egg_demo?charset=utf8mb4&parseTime=True&loc=Local"
+	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	if err != nil {
+		util.Logger.Error("db connection error:" + err.Error())
+	}
+
+	rdb = redis.NewClient(&redis.Options{
+		Addr:     "localhost:6379",
+		Password: "",
+		DB:       0,
+	})
+	rctx = context.Background()
+	return err
+}

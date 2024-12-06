@@ -11,20 +11,19 @@ func Router() *gin.Engine {
 	r := gin.Default()
 
 	// 用户相关路由
-	user := r.Group("/user")
+	user := r.Group("/usermsg")
 	{
-		user.GET("/info", controller.UserController{}.GetUserInfo)
-		user.GET("/list", controller.UserController{}.GetList)    // 获取用户列表
-		user.GET("/:id", controller.UserController{}.GetUserByID) // 根据 ID 获取用户
-		user.POST("", createUser)                                 // 创建新用户
-		user.PUT("/:id", updateUserByID)                          // 更新用户信息
-		user.DELETE("/:id", deleteUserByID)                       // 删除用户
+		user.GET("/:uid", controller.UserMsgController{}.GetUserInfo)
+		// 建立信息
+		user.POST("", controller.UserMsgController{}.CreateUserInfo)
+		// 更新信息
+		user.PUT("/:uid", controller.UserMsgController{}.UpdateUserInfo)
 	}
 
-	order := r.Group("/order")
-	{
-		order.POST("/list", controller.OrderController{}.GetList)
-	}
+	//order := r.Group("/order")
+	//{
+	//	order.POST("/list", controller.OrderController{}.GetList)
+	//}
 	return r
 }
 
