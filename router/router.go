@@ -11,19 +11,35 @@ func Router() *gin.Engine {
 	r := gin.Default()
 
 	// 用户相关路由
-	user := r.Group("/usermsg")
+	userMsg := r.Group("/usermsg")
 	{
-		user.GET("/:uid", controller.UserMsgController{}.GetUserInfo)
+		userMsg.GET("/:uid", controller.UserMsgController{}.GetUserInfo)
 		// 建立信息
-		user.POST("", controller.UserMsgController{}.CreateUserInfo)
+		userMsg.POST("", controller.UserMsgController{}.CreateUserInfo)
 		// 更新信息
-		user.PUT("/:uid", controller.UserMsgController{}.UpdateUserInfo)
+		userMsg.PUT("/:uid", controller.UserMsgController{}.UpdateUserInfo)
 	}
 
-	//order := r.Group("/order")
-	//{
-	//	order.POST("/list", controller.OrderController{}.GetList)
-	//}
+	collect := r.Group("/collect")
+	{
+		collect.GET("/:uid", controller.CollectController{}.GetCollectInfo)
+		// 添加一条收藏
+		collect.POST("", controller.CollectController{}.CreateCollectInfo)
+		// 软删除
+		collect.PUT("", controller.CollectController{}.UpdateCollectInfo)
+	}
+
+	cart := r.Group("/cart")
+	{ // 获取购物车列表
+		cart.GET("/:uid", controller.CartController{}.GetCartList)
+		// 更新购物车
+		cart.PUT("", controller.CartController{}.UpdateCart)
+		// 删除购物车
+		cart.DELETE("", controller.CartController{}.DeleteCart)
+		// 添加购物车
+		cart.POST("", controller.CartController{}.AddCart)
+	}
+
 	return r
 }
 

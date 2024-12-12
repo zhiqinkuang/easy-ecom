@@ -21,6 +21,7 @@ func (u UserMsgController) GetUserInfo(c *gin.Context) {
 	umsg, err := service.QueryUserMsg(uid)
 	if err != nil {
 		ErrorJson(c, "no found uid")
+		return
 	}
 	res := UserInfoQuery{
 		Name:    umsg.Name,
@@ -35,10 +36,12 @@ func (u UserMsgController) CreateUserInfo(c *gin.Context) {
 	var userQuery UserInfoQuery
 	if err := c.ShouldBindJSON(&userQuery); err != nil {
 		RequestErrorJson(c, err.Error())
+		return
 	}
 	// 创建activity
 	if err := service.CreateUserMsg(userQuery.UserId, userQuery.Name, userQuery.Phone, userQuery.Avatar, userQuery.Address); err != nil {
 		ErrorJson(c, err.Error())
+		return
 	}
 	ChangeJson(c, "成功创建")
 
@@ -48,10 +51,12 @@ func (u UserMsgController) UpdateUserInfo(c *gin.Context) {
 	var userQuery UserInfoQuery
 	if err := c.ShouldBindJSON(&userQuery); err != nil {
 		RequestErrorJson(c, err.Error())
+		return
 	}
 	// 创建activity
 	if err := service.UpdateUserMsg(userQuery.UserId, userQuery.Name, userQuery.Phone, userQuery.Avatar, userQuery.Address); err != nil {
 		ErrorJson(c, err.Error())
+		return
 	}
 	ChangeJson(c, "成功修改用户信息")
 
