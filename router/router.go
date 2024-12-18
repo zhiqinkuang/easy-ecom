@@ -3,7 +3,6 @@ package router
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/zhiqinkuang/easy-ecom/controller"
-	"net/http"
 )
 
 // 路由初始化函数
@@ -40,44 +39,32 @@ func Router() *gin.Engine {
 		cart.POST("", controller.CartController{}.AddCart)
 	}
 
+	order := r.Group("/order")
+	{
+		// 获取指定用户和状态的订单
+		order.GET("", controller.NewOrderController().GetOrdersHandler)
+		// 根据订单ID获取订单
+		order.GET("/:orderId", controller.NewOrderController().GetOrderByIdHandler)
+		// 更新订单状态
+		order.PUT("/:orderId", controller.NewOrderController().UpdateOrderStatusHandler)
+		// 创建新订单
+		order.POST("", controller.NewOrderController().CreateNewOrderHandler)
+	}
+
+	goodAtr := r.Group("/goodsAtr")
+	{
+		goodAtr.GET("/:goodsId", controller.GoodAtrController{}.GetGoodsAtr)
+	}
+
+	goodType := r.Group("/goodsType")
+	{
+		goodType.GET("/parentId/:parent", controller.GoodsCategoryController{}.GetGoodsTypeByParent)
+		goodType.GET("/levelId/:level", controller.GoodsCategoryController{}.GetGoodsTypeByLevel)
+	}
+
+	good := r.Group("/goods")
+	{
+		good.GET("/:categoryId", controller.GoodController{}.GetGoods)
+	}
 	return r
-}
-
-// 获取用户列表
-func getUserList(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"message": "用户列表"})
-}
-
-// 根据 ID 获取用户
-func getUserByID(c *gin.Context) {
-	id := c.Param("id")
-	c.JSON(http.StatusOK, gin.H{"message": "获取用户", "id": id})
-}
-
-// 创建用户
-func createUser(c *gin.Context) {
-	// 解析请求体（假设请求体包含 JSON 格式的用户数据）
-	var user map[string]interface{}
-	if err := c.BindJSON(&user); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-	c.JSON(http.StatusCreated, gin.H{"message": "用户已创建", "user": user})
-}
-
-// 更新用户信息
-func updateUserByID(c *gin.Context) {
-	id := c.Param("id")
-	var user map[string]interface{}
-	if err := c.BindJSON(&user); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-	c.JSON(http.StatusOK, gin.H{"message": "用户信息已更新", "id": id, "user": user})
-}
-
-// 删除用户
-func deleteUserByID(c *gin.Context) {
-	id := c.Param("id")
-	c.JSON(http.StatusOK, gin.H{"message": "用户已删除", "id": id})
 }
