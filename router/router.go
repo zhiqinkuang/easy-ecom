@@ -66,5 +66,16 @@ func Router() *gin.Engine {
 	{
 		good.GET("/:categoryId", controller.GoodController{}.GetGoods)
 	}
+
+	banner := r.Group("/banner")
+	{
+		banner.GET("", controller.BannerController{}.GetBannerList)
+	}
+
+	capPic := r.Group("/captcha")
+	{
+		capPic.GET("", controller.LoginController{}.GenerateCaptcha)
+	}
+
 	return r
 }

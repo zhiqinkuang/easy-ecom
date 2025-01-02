@@ -44,7 +44,6 @@ func (u UserMsgController) CreateUserInfo(c *gin.Context) {
 		return
 	}
 	ChangeJson(c, "成功创建")
-
 }
 
 func (u UserMsgController) UpdateUserInfo(c *gin.Context) {
